@@ -1,0 +1,13 @@
+SHOW DATABASES;
+
+USE nba_data_from_playwright;
+
+SHOW TABLES;
+
+DESCRIBE nba_players;
+
+SELECT * FROM nba_players;
+
+SELECT * FROM nba_players LIMIT 10;
+
+EXIT;
