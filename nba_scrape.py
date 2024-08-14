@@ -9,7 +9,7 @@ class FetchNBA_Names_HREF:
         print("Running get_all_players_page_source method in FetchNBA_Names_HREF class")
 
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
+            browser = p.chromium.launch(headless=False)
             page = browser.new_page()
             page.goto(self.url)
 
