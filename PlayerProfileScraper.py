@@ -10,7 +10,7 @@ class PlayerProfileScraper:
         profile_data_list = []
 
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
+            browser = p.chromium.launch(headless=False)
             page = browser.new_page()
 
             for player in player_data_from_nba_scrape:
