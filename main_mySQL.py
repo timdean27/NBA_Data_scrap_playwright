@@ -1,7 +1,7 @@
 import os
-from nba_scrape import FetchNBA_Names_HREF
-from PlayerProfileScraper import PlayerProfileScraper
-from push_profile_to_mysql import PushProfileToMySQL
+from NBA_Scrape import FetchNBA_Names_HREF
+from PlayerProfileScraper import Player_Profile_Scraper
+from Push_Profile_to_Mysql import Push_Profile_ToMySQL
 from Check_or_Create_DB import Check_or_Create_DB
 
 if __name__ == "__main__":
@@ -31,12 +31,12 @@ if __name__ == "__main__":
         # Fetch player data
         print("Fetching NBA player data...")
         page_source = nba_fetcher.get_all_players_page_source()
-        player_data_from_nba_scrape = nba_fetcher.get_player_data(page_source)
+        player_data_from_nba_scrape = nba_fetcher.get_player_data(page_source ,limit_players_for_test=10)
         print(f"Found {len(player_data_from_nba_scrape)} players.")
 
         # Create an instance of the PlayerProfileScraper class
         print("Creating PlayerProfileScraper instance...")
-        profile_scraper = PlayerProfileScraper()
+        profile_scraper = Player_Profile_Scraper()
 
         # Scrape player profiles using the obtained player data
         print("Scraping player profiles...")
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
         # Create an instance of the PushProfileToMySQL class
         print("Creating PushProfileToMySQL instance...")
-        profile_pusher = PushProfileToMySQL(mysql_host, mysql_user, mysql_password, mysql_database)
+        profile_pusher = Push_Profile_ToMySQL(mysql_host, mysql_user, mysql_password, mysql_database)
 
         # Push profile data to MySQL
         print("Pushing profile data to MySQL...")

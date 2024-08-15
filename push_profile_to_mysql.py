@@ -2,7 +2,7 @@ import mysql.connector
 from mysql.connector import Error
 import logging
 
-class PushProfileToMySQL:
+class Push_Profile_ToMySQL:
     def __init__(self, host, user, password, database):
         self.host = host
         self.user = user
