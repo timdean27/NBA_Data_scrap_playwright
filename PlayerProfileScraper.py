@@ -1,7 +1,7 @@
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 
-class PlayerProfileScraper:
+class Player_Profile_Scraper:
     def __init__(self):
         self.base_url = "https://www.nba.com"
 
