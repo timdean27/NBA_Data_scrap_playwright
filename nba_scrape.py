@@ -50,6 +50,12 @@ class FetchNBA_Names_HREF:
         try:
             # Parse the HTML content using BeautifulSoup
             soup = BeautifulSoup(page_source, "html.parser")
+            # Save the parsed HTML to a file
+            with open("All_PLAYERS_HTML_FROM_GET_PLAYER_DATA.html", "w", encoding="utf-8") as file:
+                file.write(soup.prettify())
+                print("Saved the HTML content to 'All_PLAYERS_HTML_FROM_GET_PLAYER_DATA.html'")
+            # "w": Write mode. Opens the file for writing. If the file already exists, it will be overwritten. If the file does not exist, it will be created.
+
             player_list = soup.find("table", class_="players-list")  # Locate the table containing player information
 
             player_data = []  # Initialize an empty list to store player data
