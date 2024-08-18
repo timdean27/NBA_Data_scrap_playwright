@@ -58,18 +58,4 @@ class Player_Profile_Scraper:
             return 0.0 if value == '--' else float(value)
         return 0.0
 
-# Example usage:
-if __name__ == "__main__":
-    nba_fetcher = FetchNBA_Names_HREF()
-    page_source = nba_fetcher.get_all_players_page_source()
-    player_data = nba_fetcher.get_player_data(page_source)
 
-    profile_scraper = PlayerProfileScraper()
-    result = profile_scraper.scrape_player_profiles(player_data)
-
-    if result:
-        print(f"Scraped profiles for {len(result)} players.")
-        for player_profile in result:
-            print(player_profile)
-    else:
-        print("No player profiles scraped.")
