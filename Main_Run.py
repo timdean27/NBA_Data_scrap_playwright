@@ -1,8 +1,9 @@
 import os
 from NBA_Scrape import FetchNBA_Names_HREF
 from PlayerProfileScraper import Player_Profile_Scraper
-from Push_Profile_to_Postgres import Push_Profile_ToPostgres 
-from Check_or_Create_DB_Postgres import Check_or_Create_DB 
+from Push_Profile_to_Postgres import Push_Profile_ToPostgres
+from Check_or_Create_DB_Postgres import Check_or_Create_DB
+from Collect_Last_Five_Games import Collect_Last_Five_Games_Class
 
 if __name__ == "__main__":
     postgres_host = os.environ.get('POSTGRES_HOST')
@@ -23,7 +24,7 @@ if __name__ == "__main__":
         creatDB.create_database()
         creatDB.create_table()
 
-        # Create an instance of the FetchNBA_Names_HREF class
+        # Create an instance of the FetchNBA_Names_HREF class in NBA_Scrape file
         print("Creating FetchNBA_Names_HREF instance...")
         nba_fetcher = FetchNBA_Names_HREF()
 
@@ -50,6 +51,15 @@ if __name__ == "__main__":
         print("Pushing profile data to PostgreSQL...")
         profile_pusher.push_profile_data_to_postgres(profile_data)
         print("Profile data successfully pushed to PostgreSQL.")
+
+        # Create an instance of the Collect_Last_Five_Games_Class class
+        print("Creating Collect_Last_Five_Games_Class instance...")
+        scrape_last_5_games_instance = Collect_Last_Five_Games_Class()
+
+        # Scrape last 5 games from players' profiles
+        print("Scraping last 5 games for each player...")
+        player_last_five_games = scrape_last_5_games_instance.scrape_player_last_five_games(profile_data)
+        print("Last 5 games data successfully scraped.")
 
     except Exception as e:
         print(f"An error occurred: {e}")

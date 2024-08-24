@@ -27,28 +27,53 @@ class UpdateAWSRDS:
             rds_conn = psycopg2.connect(**self.rds_db_config)
             rds_cursor = rds_conn.cursor()
 
+            # Create table if it doesn't exist
+            create_table_query = """
+            CREATE TABLE IF NOT EXISTS player_data_rds_schema.player_data_rds (
+                id SERIAL PRIMARY KEY,
+                full_name VARCHAR(255) NOT NULL,
+                first_name VARCHAR(255) NOT NULL,
+                last_name VARCHAR(255) NOT NULL,
+                href VARCHAR(255) UNIQUE NOT NULL,
+                img_src VARCHAR(255) NOT NULL,
+                ppg FLOAT,
+                rpg FLOAT,
+                apg FLOAT,
+                pie FLOAT
+            );
+            """
+            rds_cursor.execute(create_table_query)
+            logging.info("Table 'player_data_rds' created successfully.")
+
+            # Insert or update data
+            insert_query = """
+                INSERT INTO player_data_rds_schema.player_data_rds (id, full_name, first_name, last_name, href, img_src, ppg, rpg, apg, pie)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (id) DO UPDATE SET
+                    full_name = EXCLUDED.full_name,
+                    first_name = EXCLUDED.first_name,
+                    last_name = EXCLUDED.last_name,
+                    href = EXCLUDED.href,
+                    img_src = EXCLUDED.img_src,
+                    ppg = EXCLUDED.ppg,
+                    rpg = EXCLUDED.rpg,
+                    apg = EXCLUDED.apg,
+                    pie = EXCLUDED.pie;
+            """
+
             for row in data:
-                insert_query = """
-                        INSERT INTO player_data_rds_schema.player_data_rds (id, full_name, first_name, last_name, href, img_src, ppg, rpg, apg, pie)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                        ON CONFLICT (id) DO UPDATE SET
-                            full_name = EXCLUDED.full_name,
-                            first_name = EXCLUDED.first_name,
-                            last_name = EXCLUDED.last_name,
-                            href = EXCLUDED.href,
-                            img_src = EXCLUDED.img_src,
-                            ppg = EXCLUDED.ppg,
-                            rpg = EXCLUDED.rpg,
-                            apg = EXCLUDED.apg,
-                            pie = EXCLUDED.pie;
-                """
-                rds_cursor.execute(insert_query, row)
+                logging.info(f"Inserting/Updating row: {row}")
+                try:
+                    rds_cursor.execute(insert_query, row)
+                except psycopg2.Error as e:
+                    logging.error(f"Error executing query: {e}")
+                    logging.error(f"Query: {insert_query}")
+                    logging.error(f"Data: {row}")
 
             rds_conn.commit()
             rds_cursor.close()
             rds_conn.close()
             logging.info("AWS RDS database updated successfully.")
-
         except Exception as e:
             logging.error(f"Error updating AWS RDS database: {e}")
 
@@ -72,7 +97,7 @@ if __name__ == "__main__":
     }
 
     # Set up logging
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
 
     # Initialize the updater
     updater = UpdateAWSRDS(local_db_config, rds_db_config)
