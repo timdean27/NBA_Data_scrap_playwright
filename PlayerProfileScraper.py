@@ -15,7 +15,7 @@ class Player_Profile_Scraper:
 
             for player in player_data_from_nba_scrape:
                 player_href = player['href']
-                player_profile_url = f"{self.base_url}{player_href}/profile"
+                player_profile_url = f"{self.base_url}{player_href}profile"
 
                 try:
                     page.goto(player_profile_url)
