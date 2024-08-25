@@ -1,5 +1,4 @@
-
-from playwright.sync_api import sync_playwright 
+from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 
 
@@ -77,11 +76,21 @@ class FetchNBA_Names_HREF:
                     player_href = player_page_link.get("href")  # Get the player's profile URL
                     player_img_src = player_image.get("src")  # Get the player's image URL
 
+                    # Extract player_id from href
+                    player_id = player_href.split('/')[2]  # Extract ID from /player/ID/
+
                     # Append the player data to the list
-                    player_data.append({"name": full_name, "first_name": player_first_name, "last_name": player_last_name, "href": player_href, "img_src": player_img_src})
+                    player_data.append({
+                        "name": full_name,
+                        "first_name": player_first_name,
+                        "last_name": player_last_name,
+                        "href": player_href,
+                        "img_src": player_img_src,
+                        "player_id": player_id  # Add player_id to the data
+                    })
 
                     # Print the collected data for each player
-                    print(f"Collected data for Player {idx}: {full_name}, Link: {player_href}")
+                    print(f"Collected data for Player {idx}: {full_name}, Link: {player_href}, ID: {player_id}")
 
                 # Limit the number of players collected for testing purposes
                 if len(player_data) >= limit_players_for_test:
