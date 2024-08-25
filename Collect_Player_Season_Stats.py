@@ -23,18 +23,20 @@ class PlayerSeasonDataScraper:
                 for player in player_data_from_nba_scrape:
                     player_name = player.get('name', 'Unknown Player')
                     player_id = player['player_id']
-                    player_profile_url = f"{self.base_url}/stats/player/{player_id}"
+                    player_profile_url = f"https://www.nba.com/stats/player/{player_id}"
 
                     logging.info(f"Processing player: {player_name}, player_id: {player_id}")
 
                     try:
-                        page.goto(player_profile_url, timeout=30000)  # Set a timeout for page loading
-                        page.wait_for_load_state('networkidle')  # Wait until network is idle
+                        page.goto(player_profile_url, timeout=60000)  # Increased timeout for page loading
 
-                        # Check if the "No data available" message exists
-                        no_data_message = page.query_selector('div.NoDataMessage_base__xUA61')
-                        if no_data_message:
-                            logging.info(f"No data available for player_id: {player_id}. Adding row with zeros.")
+                        # Check if the player is a rookie
+                        experience_elements = page.locator('div.PlayerSummary_playerInfo__om2G4 >> p.PlayerSummary_playerInfoValue__JS8_v')
+                        experience_texts = [elem.inner_text() for elem in experience_elements.all()]
+
+                        # Filter and check if any of the texts contain 'Rookie'
+                        if any('Rookie' in text for text in experience_texts):
+                            logging.info(f"Player {player_name} is a rookie. Adding row with zeros.")
                             # Add a row with zeros
                             profile_data_list.append({
                                 "player_name": player_name,
@@ -69,10 +71,11 @@ class PlayerSeasonDataScraper:
                                 }
                             })
                         else:
-                            # Locate the first row inside the table body
-                            logging.info(f"Locating the first row for player_id: {player_id}")
+                            # Locate the first Crom_body__UYOcU on the page
+                            logging.info(f"Locating the first Crom_body__UYOcU table for player_id: {player_id}")
                             page.wait_for_selector('tbody.Crom_body__UYOcU', timeout=10000)
-                            first_row_locator = page.locator('tbody.Crom_body__UYOcU >> tr').first
+                            first_table_locator = page.locator('tbody.Crom_body__UYOcU').first
+                            first_row_locator = first_table_locator.locator('tr').first
                             first_row_html = first_row_locator.inner_html()
                             soup = BeautifulSoup(first_row_html, 'html.parser')
 
@@ -142,9 +145,11 @@ player_data_from_nba_scrape = [
     {'name': 'Melvin Ajinca', 'first_name': 'Melvin', 'last_name': 'Ajinca', 'href': '/player/1642351/melvin-ajinca/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1642351.png', 'player_id': '1642351'},
     {'name': 'Santi Aldama', 'first_name': 'Santi', 'last_name': 'Aldama', 'href': '/player/1630583/santi-aldama/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630583.png', 'player_id': '1630583'},
     {'name': 'Trey Alexander', 'first_name': 'Trey', 'last_name': 'Alexander', 'href': '/player/1641725/trey-alexander/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1641725.png', 'player_id': '1641725'},
-    {'name': 'Johnny Juzang', 'first_name': 'Johnny', 'last_name': 'Juzang', 'href': '/player/1630200/johnny-juzang/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630200.png', 'player_id': '1630200'}
+    {'name': 'Johnny Juzang', 'first_name': 'Johnny', 'last_name': 'Juzang', 'href': '/player/1630548/johnny-juzang/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630200.png', 'player_id': '1630548'},
+    {'name': 'E.J. Liddell', 'first_name': 'E.J.', 'last_name': 'Liddell', 'href': '/player/1630604/ej-liddell/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630617.png', 'player_id': '1630604'},
+    {'name': 'Kris Murray', 'first_name': 'Kris', 'last_name': 'Murray', 'href': '/player/1631200/kris-murray/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630718.png', 'player_id': '1631200'},
+    {'name': 'Jalen Wilson', 'first_name': 'Jalen', 'last_name': 'Wilson', 'href': '/player/1630592/jalen-wilson/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630830.png', 'player_id': '1630592'}
 ]
 
-# Initialize the scraper
 scraper = PlayerSeasonDataScraper()
 scraper.scrape_player_season_data(player_data_from_nba_scrape)
