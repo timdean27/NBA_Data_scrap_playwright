@@ -136,20 +136,20 @@ class PlayerSeasonDataScraper:
         return profile_data_list
 
 
-# Test data
-player_data_from_nba_scrape = [
-    {'name': 'Precious Achiuwa', 'first_name': 'Precious', 'last_name': 'Achiuwa', 'href': '/player/1630173/precious-achiuwa/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630173.png', 'player_id': '1630173'},
-    {'name': 'Steven Adams', 'first_name': 'Steven', 'last_name': 'Adams', 'href': '/player/203500/steven-adams/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/203500.png', 'player_id': '203500'},
-    {'name': 'Bam Adebayo', 'first_name': 'Bam', 'last_name': 'Adebayo', 'href': '/player/1628389/bam-adebayo/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1628389.png', 'player_id': '1628389'},
-    {'name': 'Ochai Agbaji', 'first_name': 'Ochai', 'last_name': 'Agbaji', 'href': '/player/1630534/ochai-agbaji/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630534.png', 'player_id': '1630534'},
-    {'name': 'Melvin Ajinca', 'first_name': 'Melvin', 'last_name': 'Ajinca', 'href': '/player/1642351/melvin-ajinca/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1642351.png', 'player_id': '1642351'},
-    {'name': 'Santi Aldama', 'first_name': 'Santi', 'last_name': 'Aldama', 'href': '/player/1630583/santi-aldama/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630583.png', 'player_id': '1630583'},
-    {'name': 'Trey Alexander', 'first_name': 'Trey', 'last_name': 'Alexander', 'href': '/player/1641725/trey-alexander/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1641725.png', 'player_id': '1641725'},
-    {'name': 'Johnny Juzang', 'first_name': 'Johnny', 'last_name': 'Juzang', 'href': '/player/1630548/johnny-juzang/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630200.png', 'player_id': '1630548'},
-    {'name': 'E.J. Liddell', 'first_name': 'E.J.', 'last_name': 'Liddell', 'href': '/player/1630604/ej-liddell/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630617.png', 'player_id': '1630604'},
-    {'name': 'Kris Murray', 'first_name': 'Kris', 'last_name': 'Murray', 'href': '/player/1631200/kris-murray/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630718.png', 'player_id': '1631200'},
-    {'name': 'Jalen Wilson', 'first_name': 'Jalen', 'last_name': 'Wilson', 'href': '/player/1630592/jalen-wilson/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630830.png', 'player_id': '1630592'}
-]
+# # Test data
+# player_data_from_nba_scrape = [
+#     {'name': 'Precious Achiuwa', 'first_name': 'Precious', 'last_name': 'Achiuwa', 'href': '/player/1630173/precious-achiuwa/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630173.png', 'player_id': '1630173'},
+#     {'name': 'Steven Adams', 'first_name': 'Steven', 'last_name': 'Adams', 'href': '/player/203500/steven-adams/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/203500.png', 'player_id': '203500'},
+#     {'name': 'Bam Adebayo', 'first_name': 'Bam', 'last_name': 'Adebayo', 'href': '/player/1628389/bam-adebayo/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1628389.png', 'player_id': '1628389'},
+#     {'name': 'Ochai Agbaji', 'first_name': 'Ochai', 'last_name': 'Agbaji', 'href': '/player/1630534/ochai-agbaji/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630534.png', 'player_id': '1630534'},
+#     {'name': 'Melvin Ajinca', 'first_name': 'Melvin', 'last_name': 'Ajinca', 'href': '/player/1642351/melvin-ajinca/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1642351.png', 'player_id': '1642351'},
+#     {'name': 'Santi Aldama', 'first_name': 'Santi', 'last_name': 'Aldama', 'href': '/player/1630583/santi-aldama/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630583.png', 'player_id': '1630583'},
+#     {'name': 'Trey Alexander', 'first_name': 'Trey', 'last_name': 'Alexander', 'href': '/player/1641725/trey-alexander/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1641725.png', 'player_id': '1641725'},
+#     {'name': 'Johnny Juzang', 'first_name': 'Johnny', 'last_name': 'Juzang', 'href': '/player/1630548/johnny-juzang/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630200.png', 'player_id': '1630548'},
+#     {'name': 'E.J. Liddell', 'first_name': 'E.J.', 'last_name': 'Liddell', 'href': '/player/1630604/ej-liddell/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630617.png', 'player_id': '1630604'},
+#     {'name': 'Kris Murray', 'first_name': 'Kris', 'last_name': 'Murray', 'href': '/player/1631200/kris-murray/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630718.png', 'player_id': '1631200'},
+#     {'name': 'Jalen Wilson', 'first_name': 'Jalen', 'last_name': 'Wilson', 'href': '/player/1630592/jalen-wilson/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630830.png', 'player_id': '1630592'}
+# ]
 
-scraper = PlayerSeasonDataScraper()
-scraper.scrape_player_season_data(player_data_from_nba_scrape)
+# scraper = PlayerSeasonDataScraper()
+# scraper.scrape_player_season_data(player_data_from_nba_scrape)

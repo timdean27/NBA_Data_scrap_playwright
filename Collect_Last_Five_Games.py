@@ -13,7 +13,7 @@ class Collect_Last_Five_Games_Class:
         # Set up logging
         logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-    def scrape_player_last_five_games(self, page_source, profile_season_data):
+    def scrape_player_last_five_games(self, player_data_from_nba_scrape, profile_season_data):
         logging.info("Running scrape_player_last_five_games method in Collect_Last_Five_Games_Class class")
         player_last_five_games_dict = {}
 
@@ -22,45 +22,18 @@ class Collect_Last_Five_Games_Class:
             try:
                 page = browser.new_page()
 
-                for player in page_source:
-                    player_name = player.get('name', 'Unknown Player')
+                for player in player_data_from_nba_scrape:
+                    player_name = player['name']
                     player_href = player['href']
                     player_profile_url = f"{self.base_url}{player_href}/profile"
 
-                    # Initialize player games data
-                    player_last_five_games_dict[player_name] = {
-                        f"game{i+1}": {
-                            "Game Date": "0",
-                            "Matchup": "0",
-                            "W/L": "0",
-                            "MIN": "0",
-                            "PTS": "0",
-                            "FGM": "0",
-                            "FGA": "0",
-                            "FG%": "0",
-                            "3PM": "0",
-                            "3PA": "0",
-                            "3P%": "0",
-                            "FTM": "0",
-                            "FTA": "0",
-                            "FT%": "0",
-                            "OREB": "0",
-                            "DREB": "0",
-                            "REB": "0",
-                            "AST": "0",
-                            "STL": "0",
-                            "BLK": "0",
-                            "TOV": "0",
-                            "PF": "0",
-                            "+/-": "0"
-                        } for i in range(5)
-                    }
+                    player_last_five_games_dict[player_name] = {f"game{i+1}": {} for i in range(5)}
 
-                    if profile_season_data.get('games_played', 0) > 0:
+                    if profile_season_data['games_played'] > 0:
                         try:
-                            page.goto(player_profile_url, timeout=30000)
-                            page.wait_for_timeout(2000)
-                            
+                            page.goto(player_profile_url, timeout=40000)
+                            page.wait_for_load_state('networkidle')
+
                             # Locate the table and extract its HTML content
                             table_locator = page.locator('div.MockStatsTable_statsTable__V_Skx >> table')
                             table_html = table_locator.inner_html()
@@ -71,14 +44,10 @@ class Collect_Last_Five_Games_Class:
 
                             if tbody:
                                 rows = tbody.find_all('tr')
-
                                 for i, row in enumerate(rows[:5]):  # Get only the last 5 games
                                     columns = row.find_all('td')
                                     if len(columns) == 23:  # Expected number of columns
                                         row_data = [col.get_text(strip=True) for col in columns]
-                                        # Fill missing data
-                                        if len(row_data) < 23:
-                                            row_data.extend(['0.0'] * (23 - len(row_data)))
                                         player_last_five_games_dict[player_name][f"game{i+1}"] = {
                                             "Game Date": row_data[0],
                                             "Matchup": row_data[1],
@@ -105,12 +74,13 @@ class Collect_Last_Five_Games_Class:
                                             "+/-": row_data[22]
                                         }
                                     else:
-                                        logging.warning(f"Unexpected number of columns in row: {len(columns)} for player: {player_name}")
+                                        logging.warning(f"Unexpected number of columns ({len(columns)}) in row for player: {player_name}")
                             else:
                                 logging.warning(f"No tbody found in table for player: {player_profile_url}")
 
                         except Exception as e:
-                            logging.error(f"Error scraping player profile for player: {player_name} - {e}")
+                            logging.error(f"Error scraping player profile for player: {player_name} - {str(e)}")
+                            logging.error(f"Player URL: {player_profile_url}")
 
             finally:
                 browser.close()
@@ -124,9 +94,10 @@ class Collect_Last_Five_Games_Class:
 
         return player_last_five_games_dict
 
+
 # Test data
 # # Sample player profile data as a list of dictionaries
-# page_source = [
+# player_data_from_nba_scrape = [
 #     {'name': 'Precious Achiuwa', 'first_name': 'Precious', 'last_name': 'Achiuwa', 'href': '/player/1630173/precious-achiuwa/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1630173.png', 'ppg': 7.6, 'rpg': 6.6, 'apg': 1.3, 'pie': 9.5},
 #     {'name': 'Steven Adams', 'first_name': 'Steven', 'last_name': 'Adams', 'href': '/player/203500/steven-adams/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/203500.png', 'ppg': 8.6, 'rpg': 11.5, 'apg': 2.3, 'pie': 11.2},
 #     {'name': 'Bam Adebayo', 'first_name': 'Bam', 'last_name': 'Adebayo', 'href': '/player/1628389/bam-adebayo/', 'img_src': 'https://cdn.nba.com/headshots/nba/latest/260x190/1628389.png', 'ppg': 19.3, 'rpg': 10.4, 'apg': 3.9, 'pie': 15.2},
@@ -140,5 +111,5 @@ class Collect_Last_Five_Games_Class:
 
 # # Initialize the class and call the method
 # collector = Collect_Last_Five_Games_Class()
-# player_last_five_games = collector.scrape_player_last_five_games(page_source)
+# player_last_five_games = collector.scrape_player_last_five_games(player_data_from_nba_scrape)
 # print(player_last_five_games)
