@@ -19,7 +19,6 @@ class PushSeasonDataToPostgres:
             ) as connection:
                 with connection.cursor() as cursor:
                     for profile_data in profile_season_data:
-                        player_name = profile_data['player_name']
                         player_id = profile_data['player_id']
                         season_year = profile_data['game_data']['season_year']
                         team = profile_data['game_data']['team']

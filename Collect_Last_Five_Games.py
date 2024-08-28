@@ -10,10 +10,10 @@ class Collect_Last_Five_Games_Class:
         self.output_dir = "last5GamesData"
         self.json_file_path = os.path.join(self.output_dir, "player_last_five_games.json")
 
-        # Set up logging
-        logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+        # Set up logging with class and function names
+        logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(module)s - %(funcName)s - %(message)s')
 
-    def scrape_player_last_five_games(self, player_data_from_nba_scrape, profile_season_data):
+    def scrape_player_last_five_games(self, player_data_from_nba_scrape ):
         logging.info("Running scrape_player_last_five_games method in Collect_Last_Five_Games_Class class")
         player_last_five_games_dict = {}
 
@@ -24,63 +24,77 @@ class Collect_Last_Five_Games_Class:
 
                 for player in player_data_from_nba_scrape:
                     player_name = player['name']
+                    player_id = player['player_id']
                     player_href = player['href']
-                    player_profile_url = f"{self.base_url}{player_href}/profile"
+                    player_profile_url = f"{self.base_url}{player_href}"
 
                     player_last_five_games_dict[player_name] = {f"game{i+1}": {} for i in range(5)}
 
-                    if profile_season_data['games_played'] > 0:
-                        try:
-                            page.goto(player_profile_url, timeout=40000)
-                            page.wait_for_load_state('networkidle')
+                    try:
+                        page.goto(player_profile_url, timeout=60000)  # Increased timeout for page loading
 
-                            # Locate the table and extract its HTML content
-                            table_locator = page.locator('div.MockStatsTable_statsTable__V_Skx >> table')
-                            table_html = table_locator.inner_html()
+                        # Check if the player is a rookie
+                        experience_elements = page.locator('div.PlayerSummary_playerInfo__om2G4 >> p.PlayerSummary_playerInfoValue__JS8_v')
+                        experience_texts = [elem.inner_text() for elem in experience_elements.all()]
 
-                            # Parse the HTML content with BeautifulSoup
-                            soup = BeautifulSoup(table_html, 'html.parser')
-                            tbody = soup.find('tbody')
+                        # Skip data collection if the player is a rookie
+                        if any('Rookie' in text for text in experience_texts):
+                            logging.info(f"Player {player_name} is a rookie. Skipping data collection.")
+                            continue
 
-                            if tbody:
-                                rows = tbody.find_all('tr')
-                                for i, row in enumerate(rows[:5]):  # Get only the last 5 games
-                                    columns = row.find_all('td')
-                                    if len(columns) == 23:  # Expected number of columns
-                                        row_data = [col.get_text(strip=True) for col in columns]
-                                        player_last_five_games_dict[player_name][f"game{i+1}"] = {
-                                            "Game Date": row_data[0],
-                                            "Matchup": row_data[1],
-                                            "W/L": row_data[2],
-                                            "MIN": row_data[3],
-                                            "PTS": row_data[4],
-                                            "FGM": row_data[5],
-                                            "FGA": row_data[6],
-                                            "FG%": row_data[7],
-                                            "3PM": row_data[8],
-                                            "3PA": row_data[9],
-                                            "3P%": row_data[10],
-                                            "FTM": row_data[11],
-                                            "FTA": row_data[12],
-                                            "FT%": row_data[13],
-                                            "OREB": row_data[14],
-                                            "DREB": row_data[15],
-                                            "REB": row_data[16],
-                                            "AST": row_data[17],
-                                            "STL": row_data[18],
-                                            "BLK": row_data[19],
-                                            "TOV": row_data[20],
-                                            "PF": row_data[21],
-                                            "+/-": row_data[22]
-                                        }
-                                    else:
-                                        logging.warning(f"Unexpected number of columns ({len(columns)}) in row for player: {player_name}")
-                            else:
-                                logging.warning(f"No tbody found in table for player: {player_profile_url}")
+                        # Locate the table and extract its HTML content
+                        table_locator = page.locator('div.MockStatsTable_statsTable__V_Skx >> table')
+                        table_html = table_locator.inner_html()
 
-                        except Exception as e:
-                            logging.error(f"Error scraping player profile for player: {player_name} - {str(e)}")
-                            logging.error(f"Player URL: {player_profile_url}")
+                        # Parse the HTML content with BeautifulSoup
+                        soup = BeautifulSoup(table_html, 'html.parser')
+                        tbody = soup.find('tbody')
+
+                        if tbody:
+                            rows = tbody.find_all('tr')
+                            for i, row in enumerate(rows[:5]):  # Get only the last 5 games
+                                columns = row.find_all('td')
+                                if len(columns) == 23:  # Expected number of columns
+                                    row_data = [col.get_text(strip=True) for col in columns]
+                                    player_last_five_games_dict[player_name][f"game{i+1}"] = {
+                                        "player_id": player_id,
+                                        "Game Date": row_data[0],
+                                        "Matchup": row_data[1],
+                                        "W/L": row_data[2],
+                                        "MIN": row_data[3],
+                                        "PTS": row_data[4],
+                                        "FGM": row_data[5],
+                                        "FGA": row_data[6],
+                                        "FG%": row_data[7],
+                                        "3PM": row_data[8],
+                                        "3PA": row_data[9],
+                                        "3P%": row_data[10],
+                                        "FTM": row_data[11],
+                                        "FTA": row_data[12],
+                                        "FT%": row_data[13],
+                                        "OREB": row_data[14],
+                                        "DREB": row_data[15],
+                                        "REB": row_data[16],
+                                        "AST": row_data[17],
+                                        "STL": row_data[18],
+                                        "BLK": row_data[19],
+                                        "TOV": row_data[20],
+                                        "PF": row_data[21],
+                                        "+/-": row_data[22]
+                                    }
+                                else:
+                                    logging.warning(f"Unexpected number of columns ({len(columns)}) in row for player: {player_name}")
+                        else:
+                            logging.warning(f"No tbody found in table for player: {player_profile_url}")
+
+                    except Exception as e:
+                        logging.error(f"Error scraping player profile for player: {player_name} - {str(e)}")
+                        logging.error(f"Player URL: {player_profile_url}")
+                        logging.error("Traceback: ", exc_info=True)  # Logs the traceback of the exception
+
+            except Exception as e:
+                logging.error(f"Error in scrape_player_last_five_games method: {str(e)}")
+                logging.error("Traceback: ", exc_info=True)  # Logs the traceback of the exception
 
             finally:
                 browser.close()
