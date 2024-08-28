@@ -6,7 +6,7 @@ from Collect_Player_Season_Stats import PlayerSeasonDataScraper
 from NBA_Scrape import FetchNBA_Names_HREF
 from Push_Player_Main_Table import PushToNBAPlayersTable
 from Push_Player_Season_Stats import PushSeasonDataToPostgres
-from Push_Last_Five_Games_ToPostgres import Push_Last_5_games_data_to_POSTGRES
+from Push_Last_Five_Games_ToPostgres import PushLast5GamesDataToPostgres
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -71,15 +71,15 @@ if __name__ == "__main__":
         last_five_games_collector = Collect_Last_Five_Games_Class()
 
         logging.info("Scraping last 5 games for each player...")
-        player_last_five_games = last_five_games_collector.scrape_player_last_five_games(player_data_from_nba_scrape,profile_season_data)
+        player_last_five_games = last_five_games_collector.scrape_player_last_five_games(player_data_from_nba_scrape)
         logging.info("Last 5 games data successfully scraped.")
 
         # Push last 5 games data to PostgreSQL
-        logging.info("Creating Push_Last_5_games_data_to_POSTGRES instance...")
-        last_five_games_pusher = Push_Last_5_games_data_to_POSTGRES(postgres_host, postgres_user, postgres_password, postgres_database)
+        logging.info("Creating PushLast5GamesDataToPostgres instance...")
+        last_five_games_pusher = PushLast5GamesDataToPostgres(postgres_host, postgres_user, postgres_password, postgres_database)
 
         logging.info("Pushing last 5 games data to PostgreSQL...")
-        last_five_games_pusher.push_last_five_games_to_db(player_data_from_nba_scrape, profile_season_data)
+        last_five_games_pusher.push_last_five_games_to_db(player_last_five_games)
         logging.info("Last 5 games data successfully pushed to PostgreSQL.")
 
     except Exception as e:
