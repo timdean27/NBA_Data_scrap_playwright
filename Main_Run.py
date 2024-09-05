@@ -18,6 +18,11 @@ if __name__ == "__main__":
     postgres_password = os.environ.get('POSTGRES_PASSWORD')
     postgres_database = os.environ.get('POSTGRES_DATABASE')
 
+    # postgres_host = os.environ.get('RDS_HOST')
+    # postgres_user = os.environ.get('RDS_USERNAME')
+    # postgres_password = os.environ.get('RDS_PASSWORD')
+    # postgres_database = os.environ.get('RDS_DB_NAME')
+
     # Check if all required environment variables are set
     if not all([postgres_host, postgres_user, postgres_password, postgres_database]):
         logging.error("Missing one or more environment variables.")

@@ -21,7 +21,9 @@ class PushLast5GamesDataToPostgres:
                 host=self.host,
                 user=self.user,
                 password=self.password,
-                database=self.database
+                database=self.database,
+                # need port for rds
+                # port=5432
             ) as connection:
                 with connection.cursor() as cursor:
                     # Iterate over each player's game data
