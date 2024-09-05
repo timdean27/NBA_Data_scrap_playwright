@@ -15,7 +15,10 @@ class CheckOrCreateDB:
             connection = psycopg2.connect(
                 host=self.host,
                 user=self.user,
-                password=self.password
+                password=self.password,
+                # need database and port for rds
+                # database=self.database,
+                # port=5432
             )
             connection.autocommit = True
 

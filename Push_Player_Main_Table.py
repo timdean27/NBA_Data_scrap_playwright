@@ -15,7 +15,9 @@ class PushToNBAPlayersTable:
                 host=self.host,
                 user=self.user,
                 password=self.password,
-                database=self.database
+                database=self.database,
+                # need port for rds
+                # port=5432
             )
             cursor = connection.cursor()
 
