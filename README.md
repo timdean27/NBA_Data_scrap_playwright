@@ -1,34 +1,57 @@
+
 # NBA Player Profile Scraper
 
-This project is a web scraper that retrieves and stores NBA player profiles, including statistical data, into a MySQL database. It uses Playwright for web scraping and BeautifulSoup for HTML parsing.
+The NBA Player Profile Scraper is a tool designed to automatically collect and store detailed data about NBA players. It gathers player information such as statistics and profile images directly from the web and stores it in a database. The collected data can also be used to power a REST API, making it accessible for developers or applications that need live NBA data. This project is fully supported on Amazon RDS (Relational Database Service) for scalable and reliable database management.
 
-## Project Structure
+## How It Works
 
-- **`nba_scrape.py`**: Contains the `FetchNBA_Names_HREF` class for fetching NBA player data.
-- **`PlayerProfileScraper.py`**: Contains the `PlayerProfileScraper` class for scraping detailed player profiles.
-- **`push_profile_to_mysql.py`**: Contains the `PushProfileToMySQL` class for inserting player profile data into MySQL.
-- **`Check_or_Create_DB.py`**: Contains the `Check_or_Create_DB` class for creating the database and table if they do not exist.
-- **`main.py`**: Orchestrates the workflow by using the above classes to fetch, scrape, and insert data.
+This project uses web scraping techniques to gather player data from official NBA sources. The scraper automatically navigates web pages, retrieves player profiles (like their name, stats, and images), and stores this information in a database. This data can then be accessed via a REST API for use in apps, websites, or data analysis tools.
 
-## Setup
+The data collected includes:
+- Player names
+- Profile pictures
+- Points per game (PPG)
+- Rebounds per game (RPG)
+- Assists per game (APG)
+- Player Impact Estimate (PIE), which measures a player's overall contribution
 
-### Dependencies
+## Why This Project is Useful
 
-1. **Python**: Ensure you have Python 3.x installed.
-2. **Install Required Packages**:
-    ```bash
-    pip install mysql-connector-python playwright beautifulsoup4
-    playwright install
-    ```
+The NBA Player Profile Scraper is useful for:
+- Sports analysts or fans who need easy access to player data.
+- Fantasy sports enthusiasts who want up-to-date player stats for tracking or drafting.
+- Developers looking to integrate NBA player stats into applications, websites, or visualizations.
+- Building REST APIs to provide NBA data to other systems or users.
+
+## Key Features
+
+- **Automated Data Collection**: Gathers player stats without manual effort.
+- **Data Storage**: Saves the collected data in a relational database, making it easy to access for future use.
+- **REST API Support**: The data can be integrated into a REST API, allowing developers to easily retrieve player profiles through API requests.
+- **Amazon RDS**: The tool is fully compatible with Amazon RDS, providing reliable cloud-based storage and scalability for the database.
+
+## How to Use It
+
+1. **Install**: The tool requires a few simple installations to get started (Python and some additional software).
+2. **Run the Tool**: Once set up, running the main program will begin the data collection process, gathering NBA player profiles from the web.
+3. **Access the Data**: The collected data is saved in a database, which can be accessed directly or through a REST API.
+4. **Cloud Storage**: If using Amazon RDS, the scraper can easily store the data in the cloud for scalable, secure access.
+
+## Behind the Scenes
+
+Here’s a simplified explanation of how the tool works:
+- It visits the NBA's website and scans player profiles.
+- The tool collects key stats, profile images, and other relevant information.
+- This data is then stored in a database, either locally or in the cloud (via Amazon RDS), and can be accessed via a REST API for further use.
 
 ### Environment Variables
 
 Set up the following environment variables with your MySQL configuration:
 
-- `MYSQL_HOST`
-- `MYSQL_USER`
-- `MYSQL_PASSWORD`
-- `MYSQL_DATABASE`
+    postgres_host = os.environ.get('POSTGRES_HOST')
+    postgres_user = os.environ.get('POSTGRES_USER')
+    postgres_password = os.environ.get('POSTGRES_PASSWORD')
+    postgres_database = os.environ.get('POSTGRES_DATABASE')
 
 You can set these in your terminal session or include them in a `.env` file (and use a library like `python-dotenv` to load them).
 
@@ -40,45 +63,11 @@ The `Check_or_Create_DB` class will create the database and table if they do not
 
 1. **Run the Main Script**: This will execute the entire workflow.
     ```bash
-    python main.py
+    python Main_Run.py
     ```
-
-2. **Scripts Overview**:
-
-    - **`nba_scrape.py`**:
-        - **`FetchNBA_Names_HREF`**: 
-            - `get_all_players_page_source()`: Fetches the page source of all NBA players.
-            - `get_player_data(page_source)`: Extracts player data (name, href, image source) from the page source.
-
-    - **`PlayerProfileScraper.py`**:
-        - **`PlayerProfileScraper`**:
-            - `scrape_player_profiles(player_data_from_nba_scrape)`: Scrapes detailed profile data (PPG, RPG, APG, PIE) for each player.
-            - `extract_stat(soup, stat_label)`: Extracts a specific statistical value from the player's profile page.
-
-    - **`push_profile_to_mysql.py`**:
-        - **`PushProfileToMySQL`**:
-            - `push_profile_data_to_mysql(profile_data_list)`: Inserts player profile data into MySQL. It checks if columns exist and adds them if needed.
-
-    - **`Check_or_Create_DB.py`**:
-        - **`Check_or_Create_DB`**:
-            - `create_database()`: Creates the database.
-            - `create_table()`: Creates the table if it does not exist.
-
-## Logging
-
-The project uses Python's built-in logging module to record events. Logs will be displayed in the console. Adjust the logging level as needed in the script.
-
-## Notes
-
-- Ensure that the `page.wait_for_timeout()` times are appropriate for your network conditions and page load times.
-- Be mindful of the website's `robots.txt` and scraping policies. Ensure your usage complies with their terms.
 
 ## Troubleshooting
 
-- If you encounter issues with Playwright, ensure the browser binaries are installed correctly (`playwright install`).
-- Check your MySQL connection details and make sure the database server is accessible.
+If you experience issues while setting up or running the scraper, check your internet connection, browser setup, or database connection settings. If using Amazon RDS, ensure that the database configuration is correct and that permissions are properly set up.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
